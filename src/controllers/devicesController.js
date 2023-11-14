@@ -4,7 +4,7 @@ import Room from '../models/Room.js'
 const createDevice = async (req, res) => {
     const deviceData = req.body
 
-    const room = Room.findById(deviceData.roomId)
+    const room = await Room.findById(deviceData.roomId).exec()
 
     const device = new Device({
         code: deviceData.code,
@@ -19,9 +19,9 @@ const createDevice = async (req, res) => {
     try {
         await device.save()
 
-        res.status(201).json(device)
+        return res.status(201).json(device)
     } catch (err) {
-        res.status(400).json({ message: err.message })
+        return res.status(400).json({ message: err.message })
     }
 }
 
@@ -29,16 +29,16 @@ const getDevice = async (req, res) => {
     const { id } = req.params
 
     try {
-        const device = Device.findById(id)
+        const device = await Device.findById(id).exec()
 
         if (device) {
-            res.json(device)
+            return res.json(device)
         }
 
-        res.status(404).json({ message: 'Device not found' })
+        return res.status(404).json({ message: 'Device not found' })
 
     } catch (err) {
-        res.status(400).json({ message: err.message })
+        return res.status(400).json({ message: err.message })
     }
 }
 
@@ -46,9 +46,9 @@ const getDevices = async (req, res) => {
     try {
         const devices = await Device.find()
 
-        res.json(devices)
+        return res.json(devices)
     } catch (err) {
-        res.status(500).json({ message: err.message })
+        return res.status(500).json({ message: err.message })
     }
 }
 
@@ -57,7 +57,7 @@ const updateDevice = async (req, res) => {
     const deviceData = req.body
 
     try {
-        const device = Device.findById(id)
+        const device = await Device.findById(id).exec()
 
         if (device) {
             device.code = deviceData.code
@@ -66,12 +66,12 @@ const updateDevice = async (req, res) => {
 
             await device.save()
 
-            res.json(device)
+            return res.json(device)
         }
 
-        res.status(404).json({ message: 'Device not found' })
+        return res.status(404).json({ message: 'Device not found' })
     } catch (err) {
-        res.status(400).json({ message: err.message })
+        return res.status(400).json({ message: err.message })
     }
 }
 
@@ -79,17 +79,17 @@ const deleteDevice = async (req, res) => {
     const { id } = req.params
 
     try {
-        const device = Device.findById(id)
+        const device = await Device.findById(id).exec()
 
         if (device) {
             await device.remove()
 
-            res.json({ message: 'Device removed' })
+            return res.json({ message: 'Device removed' })
         }
 
-        res.status(404).json({ message: 'Device not found' })
+        return res.status(404).json({ message: 'Device not found' })
     } catch (err) {
-        res.status(500).json({ message: err.message })
+        return res.status(500).json({ message: err.message })
     }
 }
 
